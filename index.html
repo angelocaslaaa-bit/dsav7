@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+
+        name="viewport"
+
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+
+    >
+
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Snooker's Billiard Hall — Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script
+
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+
+        defer
+
+    ></script>
+
+    <script src="script.js" defer></script>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     CUSTOMER PUBLIC SIDE
+====================================================== -->
+<div id="customerPortal">
+    <header class="customerNav">
+        <div class="customerBrand">
+            <img src="snookers-logo.png" alt="Snooker's Billiard Hall logo">
+            <span>Snooker's Billiard Hall</span>
+        </div>
+    </header>
+
+    <main class="customerMain">
+        <section id="customerHomeView">
+            <div class="customerHero">
+                <div class="customerHeroCopy">
+                    <span class="customerEyebrow">BILLIARDS • KTV • GOOD TIMES</span>
+                    <h1>Play, sing, and make good memories.</h1>
+                    <p>
+                        Reserve a billiard table or our KTV room ahead of time.
+                        No customer account is required.
+                    </p>
+                    <div class="customerHeroActions">
+                        <button type="button" onclick="showCustomerReservation()">Make a Reservation</button>
+                        <button class="customerLightBtn" type="button" onclick="showCustomerLookup()">View My Reservation</button>
+                    </div>
+                </div>
+                <div class="customerHeroCard customerLocationCard">
+                    <span>Plan your visit</span>
+                    <h3>Reserve before you arrive</h3>
+                    <p>Choose your facility, date, start time, and duration. Keep your reservation ID for checking your booking later.</p>
+                    <div class="customerMapWrap">
+                        <iframe
+                            class="customerMap"
+                            title="Snooker's Billiard Hall location"
+                            src="https://www.google.com/maps?q=14.893428,120.779638&z=16&output=embed"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <a class="customerDirectionsBtn" href="https://maps.app.goo.gl/wcJtSFaGfmjFdi429" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
+                </div>
+            </div>
+
+            <div class="customerInfoGrid">
+                <article>
+                    <h3>3 Billiard Tables</h3>
+                    <p>Choose from Billiard Table 1, 2, or 3 when making your reservation.</p>
+                </article>
+                <article>
+                    <h3>1 KTV Room</h3>
+                    <p>Book the KTV room in advance and select your preferred duration.</p>
+                </article>
+                <article>
+                    <h3>30-Minute Grace Period</h3>
+                    <p>If a reserved session has not started within 30 minutes after its scheduled time, the reservation is automatically cancelled.</p>
+                </article>
+            </div>
+        </section>
+
+        <section id="customerReservationView" class="customerPublicView" style="display:none;">
+            <div class="customerPageHeading">
+                <div>
+                    <span class="customerEyebrow">RESERVATION</span>
+                    <h2>Make a Reservation</h2>
+                    <p>No account needed. Complete the details below and save your reservation ID.</p>
+                </div>
+                <button class="customerLightBtn" type="button" onclick="showCustomerHome()">Back to Home</button>
+            </div>
+
+            <div class="customerFormCard">
+                <div class="customerFormGrid">
+                    <div class="customerField">
+                        <label for="cResCustomer">Customer Name</label>
+                        <input type="text" id="cResCustomer" placeholder="Enter your full name">
+                    </div>
+                    <div class="customerField">
+                        <label for="cResContact">Contact Number</label>
+                        <input type="text" id="cResContact" placeholder="Enter your contact number">
+                    </div>
+                    <div class="customerField">
+                        <label for="cResType">Reservation Type</label>
+                        <select id="cResType" onchange="populateCustomerFacilities(); updateCustomerReservationEstimate();">
+                            <option value="Billiard">Billiard</option>
+                            <option value="KTV">KTV</option>
+                        </select>
+                    </div>
+                    <div class="customerField">
+                        <label for="cResFacility">Facility</label>
+                        <select id="cResFacility" onchange="updateCustomerReservationEstimate()"></select>
+                    </div>
+                    <div class="customerField">
+                        <label for="cResDate">Date</label>
+                        <input type="date" id="cResDate" onchange="updateCustomerReservationEstimate()">
+                    </div>
+                    <div class="customerField">
+                        <label for="cResStartTime">Start Time</label>
+                        <input type="time" id="cResStartTime" min="00:00" max="23:30" step="1800" onchange="updateCustomerReservationEstimate()">
+                    </div>
+                    <div class="customerField">
+                        <label for="cResDuration">Duration</label>
+                        <select id="cResDuration" onchange="updateCustomerReservationEstimate()">
+                            <option value="30">30 Minutes</option>
+                            <option value="60" selected>1 Hour</option>
+                            <option value="120">2 Hours</option>
+                            <option value="180">3 Hours</option>
+                            <option value="240">4 Hours</option>
+                            <option value="300">5 Hours</option>
+                            <option value="360">6 Hours</option>
+                            <option value="420">7 Hours</option>
+                            <option value="480">8 Hours</option>
+                        </select>
+                    </div>
+                    <div class="customerEstimate" id="customerReservationEstimate">
+                        Select your schedule to see the estimated price.
+                    </div>
+                </div>
+
+                <div id="cResMsg" class="msg"></div>
+                <div class="customerFormActions">
+                    <button type="button" onclick="handleCustomerReservation()">Reserve Now</button>
+                </div>
+            </div>
+
+            <div id="customerReservationConfirmation" class="customerConfirmation" style="display:none;"></div>
+        </section>
+
+        <section id="customerLookupView" class="customerPublicView" style="display:none;">
+            <div class="customerPageHeading">
+                <div>
+                    <span class="customerEyebrow">MY BOOKING</span>
+                    <h2>View My Reservation</h2>
+                    <p>Enter the reservation ID given after booking.</p>
+                </div>
+                <button class="customerLightBtn" type="button" onclick="showCustomerHome()">Back to Home</button>
+            </div>
+
+            <div class="customerLookupCard">
+                <div class="customerLookupRow">
+                    <input type="text" id="customerLookupId" placeholder="Reservation ID (example: RES001)">
+                    <button type="button" onclick="handleCustomerReservationLookup()">Search Reservation</button>
+                </div>
+                <div id="customerLookupMsg" class="msg"></div>
+                <div id="customerLookupResult"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="customerFooter">
+        <span>Snooker's Billiard Hall</span>
+        <button type="button" onclick="showStaffLogin()">Staff / Admin Login</button>
+    </footer>
+</div>
+
+
+<!-- =====================================================
+
+         LOGIN
+
+    ====================================================== -->
+
+    <div id="loginScreen">
+
+        <div class="loginBox">
+
+            <div class="loginBrand"><img src="snookers-logo.png" alt="Snooker's Billiard Hall logo"><span>Snooker's Billiard Hall</span></div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue to the management system.</p>
+
+            <label class="loginLabel" for="loginUsername">Username</label>
+            <input
+                type="text"
+                id="loginUsername"
+                placeholder="Enter your username"
+                autocomplete="username"
+            >
+
+            <label class="loginLabel" for="loginPassword">Password</label>
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+            >
+
+            <button onclick="handleLogin()">
+                Login
+            </button>
+
+            <div class="loginDivider">
+                <span>or</span>
+            </div>
+
+            <button
+                class="secondary"
+                onclick="openSignUpModal()"
+            >
+                Create an Account
+            </button>
+
+            <div id="msgLogin"></div>
+            <button class="secondary customerBackBtn" type="button" onclick="showCustomerHome()">
+                Back to Customer Page
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+
+
+<!-- =====================================================
+
+         APPLICATION
+
+    ====================================================== -->
+
+    <div id="app">
+
+
+
+
+
+<!-- ================= TOP BAR ================= -->
+
+        <div id="topbar">
+
+            <button
+
+                id="hamburgerBtn"
+
+                onclick="toggleSidebar()"
+
+            >
+
+                Menu
+
+            </button>
+
+            <h2 class="appBrand"><img src="snookers-logo.png" alt=""><span>Snooker's Billiard Hall</span></h2>
+
+            <span class="topbarSpacer"></span>
+
+        </div>
+
+
+
+
+
+        <div
+
+            id="sidebarOverlay"
+
+            onclick="toggleSidebar(false)"
+
+        ></div>
+
+
+
+
+
+<!-- ================= SIDEBAR ================= -->
+
+        <div id="sidebar">
+
+            <h2 class="appBrand"><img src="snookers-logo.png" alt=""><span>Snooker's Billiard Hall</span></h2>
+
+            <div
+
+                class="who"
+
+                id="whoText"
+
+            ></div>
+
+
+
+
+
+            <button
+                data-tab="dashboard"
+                onclick="showTab('dashboard')"
+            >
+                Live Timer
+            </button>
+
+            <div class="sidebarLabel">RESERVATIONS</div>
+
+            <button
+                data-tab="billiard-reservations"
+                onclick="showTab('billiard-reservations')"
+            >
+                Billiard Reservation
+            </button>
+
+            <button
+                data-tab="ktv-reservations"
+                onclick="showTab('ktv-reservations')"
+            >
+                KTV Reservation
+            </button>
+
+            <button
+                data-tab="walkin"
+                onclick="showTab('walkin')"
+            >
+                Walk-In
+            </button>
+
+            <div class="sidebarLabel">OPERATIONS</div>
+
+            <button
+                data-tab="drinks"
+                onclick="showTab('drinks')"
+            >
+                Drinks & Inventory
+            </button>
+
+            <button
+                data-tab="billing"
+                onclick="showTab('billing')"
+            >
+                Billing
+            </button>
+
+            <button data-tab="expenses" class="adminOnly" onclick="showTab('expenses')">
+                Expenses
+            </button>
+
+            <div class="sidebarLabel">RECORDS</div>
+
+            <button
+                data-tab="history"
+                onclick="showTab('history')"
+            >
+                Transaction History
+            </button>
+
+            <button
+                data-tab="sales-report" class="adminOnly"
+                onclick="showTab('sales-report')"
+            >
+                Sales Report
+            </button>
+
+            <button data-tab="customer-records" onclick="showTab('customer-records')">
+                Customer Records & History
+            </button>
+
+            <button data-tab="staff-tasks" onclick="showTab('staff-tasks')">
+                Staff Tasks & Notes
+            </button>
+
+            <div class="sidebarLabel adminOnly">ADMINISTRATION</div>
+
+            <button
+                data-tab="staff"
+                class="adminOnly"
+                onclick="showTab('staff')"
+            >
+                Staff Accounts (Admin)
+            </button>
+
+            <button
+                class="secondary"
+                onclick="handleLogout()"
+            >
+                Logout
+            </button>
+        </div>
+
+
+
+
+
+<!-- =================================================
+
+             MAIN CONTENT
+
+        ================================================== -->
+
+        <div id="main">
+
+
+
+
+
+<!-- =================================================
+
+                 HOME
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-dashboard"
+
+            >
+
+                <div class="liveTimerHeader">
+                    <div>
+                        <h2>Live Timer</h2>
+                        <div class="algo">
+                            Updates automatically every second.
+                            3 Billiard Tables + 1 KTV Room.
+                        </div>
+                    </div>
+                    <div class="adminOnly liveTimerHeaderAction">
+                        <button class="secondary small" type="button" onclick="openRateSettingsModal()">Update Rates</button>
+                    </div>
+                </div>
+
+                <div
+
+                    id="dashboardGrid"
+
+                    class="dashGrid"
+
+                ></div>
+
+                <div id="rateSettingsOverlay" class="rateModalOverlay" onclick="closeRateSettingsModal(event)">
+                    <div class="rateModal" onclick="event.stopPropagation()">
+                        <div class="rateModalHeader">
+                            <div>
+                                <h3>Update Hourly Rates</h3>
+                                <div class="algo">New rates apply to new reservations and walk-in sessions.</div>
+                            </div>
+                            <button class="secondary small" onclick="closeRateSettingsModal()">Close</button>
+                        </div>
+                        <div class="rateSettingsGrid">
+                            <div>
+                                <label>Billiard Rate / Hour</label>
+                                <input type="number" id="billiardRateInput" min="0" step="1">
+                            </div>
+                            <div>
+                                <label>KTV Rate / Hour</label>
+                                <input type="number" id="ktvRateInput" min="0" step="1">
+                            </div>
+                        </div>
+                        <div id="rateSettingsMsg" class="msg"></div>
+                        <div class="rateModalActions">
+                            <button class="secondary" onclick="closeRateSettingsModal()">Cancel</button>
+                            <button onclick="handleSaveRates()">Save Rates</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+<!-- =================================================
+
+                 BILLIARD RESERVATION
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-billiard-reservations"
+
+            >
+
+                <h2>Billiard Reservation</h2>
+
+                <div class="algo">
+
+                    Create, search, start, and cancel
+
+                    billiard reservations.
+
+                </div>
+
+
+
+
+
+<!-- CREATE RESERVATION -->
+
+                <div class="card reservationFormCard">
+
+                    <div class="reservationFormGrid">
+
+                        <input
+
+                            type="text"
+
+                            id="bResCustomer"
+
+                            placeholder="Customer Name"
+
+                        >
+
+                        <input
+
+                            type="text"
+
+                            id="bResContact"
+
+                            placeholder="Contact Number (optional)"
+
+                        >
+
+                        <select id="bResFacilitySelect" aria-label="Billiard Table">
+
+                            <option value="B1">Billiard Table 1</option>
+
+                            <option value="B2">Billiard Table 2</option>
+
+                            <option value="B3">Billiard Table 3</option>
+
+                        </select>
+
+                        <input
+
+                            type="date"
+
+                            id="bResDate"
+
+                            aria-label="Reservation Date"
+
+                        >
+
+                        <input
+
+                            type="time"
+
+                            id="bResStartTime"
+
+                            aria-label="Start Time"
+
+                            min="00:00"
+
+                            max="23:30"
+
+                            step="1800"
+
+                        >
+
+                        <select id="bResDurationSelect" aria-label="Duration">
+
+                            <option value="30">30 Minutes</option>
+
+                            <option value="60" selected>1 Hour</option>
+
+                            <option value="120">2 Hours</option>
+
+                            <option value="180">3 Hours</option>
+
+                            <option value="240">4 Hours</option>
+
+                            <option value="300">5 Hours</option>
+
+                            <option value="360">6 Hours</option>
+
+                            <option value="420">7 Hours</option>
+
+                            <option value="480">8 Hours</option>
+
+                        </select>
+
+                    </div>
+
+
+
+
+
+                    <div class="buttonRow">
+
+                        <button
+
+                            onclick="handleCreateReservation('Billiard')"
+
+                        >
+
+                            Create Reservation
+
+                        </button>
+
+                    </div>
+
+
+
+
+
+                    <div
+
+                        id="bResMsg"
+
+                        class="msg"
+
+                    ></div>
+
+                </div>
+
+
+
+
+
+<!-- SEARCH -->
+
+                <div class="card reservationSearchCard">
+
+                    <div class="reservationSearchRow">
+
+                        <input
+
+                            type="text"
+
+                            id="bResSearchInput"
+
+                            placeholder="Search by customer name or reservation ID"
+
+                        >
+
+                        <button
+
+                            class="secondary"
+
+                            onclick="handleReservationSearch('Billiard')"
+
+                        >
+
+                            Search
+
+                        </button>
+
+                    </div>
+
+
+
+
+
+                    <div
+
+                        id="bResSearchMsg"
+
+                        class="msg"
+
+                    ></div>
+
+                </div>
+
+
+
+
+
+<!-- RESERVATION TABLE -->
+
+                <div class="tableWrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+
+                                <th>Customer</th>
+
+                                <th>Facility</th>
+
+                                <th>Date</th>
+
+                                <th>Start</th>
+
+                                <th>End</th>
+
+                                <th>Duration</th>
+
+                                <th>Price</th>
+
+                                <th>Status</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="bResReservationsBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+
+
+<!-- =================================================
+
+                 KTV RESERVATION
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-ktv-reservations"
+
+            >
+
+                <h2>KTV Reservation</h2>
+
+                <div class="algo">
+
+                    Create, search, start, and cancel
+
+                    KTV reservations.
+
+                </div>
+
+
+
+
+
+<!-- CREATE RESERVATION -->
+
+                <div class="card reservationFormCard">
+
+                    <div class="reservationFormGrid">
+
+                        <input
+
+                            type="text"
+
+                            id="kResCustomer"
+
+                            placeholder="Customer Name"
+
+                        >
+
+                        <input
+
+                            type="text"
+
+                            id="kResContact"
+
+                            placeholder="Contact Number (optional)"
+
+                        >
+
+                        <select id="kResFacilitySelect">
+
+                            <option value="K1">KTV Room 1</option>
+
+                        </select>
+
+                        <input
+
+                            type="date"
+
+                            id="kResDate"
+
+                            aria-label="Reservation Date"
+
+                        >
+
+                        <input
+
+                            type="time"
+
+                            id="kResStartTime"
+
+                            aria-label="Start Time"
+
+                            min="00:00"
+
+                            max="23:30"
+
+                            step="1800"
+
+                        >
+
+                        <select
+
+                            id="kResDurationSelect"
+
+                            aria-label="Duration"
+
+                        >
+
+                            <option value="30">
+
+                                30 Minutes
+
+                            </option>
+
+                            <option
+
+                                value="60"
+
+                                selected
+
+                            >
+
+                                1 Hour
+
+                            </option>
+
+                            <option value="120">
+
+                                2 Hours
+
+                            </option>
+
+                            <option value="180">
+
+                                3 Hours
+
+                            </option>
+
+                            <option value="240">
+
+                                4 Hours
+
+                            </option>
+
+                            <option value="300">
+
+                                5 Hours
+
+                            </option>
+
+                            <option value="360">
+
+                                6 Hours
+
+                            </option>
+
+                            <option value="420">
+
+                                7 Hours
+
+                            </option>
+
+                            <option value="480">
+
+                                8 Hours
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+
+
+                    <div class="buttonRow">
+
+                        <button
+
+                            onclick="handleCreateReservation('KTV')"
+
+                        >
+
+                            Create Reservation
+
+                        </button>
+
+                    </div>
+
+
+
+
+
+                    <div
+
+                        id="kResMsg"
+
+                        class="msg"
+
+                    ></div>
+
+                </div>
+
+
+
+
+
+<!-- SEARCH -->
+
+                <div class="card reservationSearchCard">
+
+                    <div class="reservationSearchRow">
+
+                        <input
+
+                            type="text"
+
+                            id="kResSearchInput"
+
+                            placeholder="Search by customer name or reservation ID"
+
+                        >
+
+                        <button
+
+                            class="secondary"
+
+                            onclick="handleReservationSearch('KTV')"
+
+                        >
+
+                            Search
+
+                        </button>
+
+                    </div>
+
+
+
+
+
+                    <div
+
+                        id="kResSearchMsg"
+
+                        class="msg"
+
+                    ></div>
+
+                </div>
+
+
+
+
+
+<!-- RESERVATION TABLE -->
+
+                <div class="tableWrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+
+                                <th>Customer</th>
+
+                                <th>Facility</th>
+
+                                <th>Date</th>
+
+                                <th>Start</th>
+
+                                <th>End</th>
+
+                                <th>Duration</th>
+
+                                <th>Price</th>
+
+                                <th>Status</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="kResReservationsBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+
+
+<!-- =================================================
+
+                 WALK-IN
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-walkin"
+
+            >
+
+                <h2>Walk-In Queue</h2>
+
+                <div class="algo">
+
+                    For customers without a reservation.
+
+                    Waits in queue if all matching facilities
+
+                    are occupied.
+
+                </div>
+
+
+
+
+
+                <div class="card">
+
+                    <div class="row">
+
+                        <input
+
+                            type="text"
+
+                            id="wiCustomer"
+
+                            placeholder="Customer Name"
+
+                        >
+
+
+
+
+
+                        <select id="wiFacilityType">
+
+    <option value="B1">Billiard Table 1</option>
+
+    <option value="B2">Billiard Table 2</option>
+
+    <option value="B3">Billiard Table 3</option>
+
+    <option value="K1">KTV Room 1</option>
+
+</select>
+
+                    </div>
+
+
+
+
+
+                    <div class="row">
+
+                        <select id="wiDurationSelect">
+
+                            <option value="30">
+
+                                30 Minutes
+
+                            </option>
+
+                            <option
+
+                                value="60"
+
+                                selected
+
+                            >
+
+                                1 Hour
+
+                            </option>
+
+                            <option value="120">
+
+                                2 Hours
+
+                            </option>
+
+                            <option value="180">
+
+                                3 Hours
+
+                            </option>
+
+                            <option value="240">
+
+                                4 Hours
+
+                            </option>
+
+                            <option value="300">
+
+                                5 Hours
+
+                            </option>
+
+                            <option value="360">
+
+                                6 Hours
+
+                            </option>
+
+                            <option value="420">
+
+                                7 Hours
+
+                            </option>
+
+                            <option value="480">
+
+                                8 Hours
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+
+
+                    <div class="buttonRow">
+
+                        <button onclick="handleAddWalkIn()">
+
+                            Add to Queue
+
+                        </button>
+
+                    </div>
+
+
+
+
+
+                    <div
+
+                        id="wiMsg"
+
+                        class="msg"
+
+                    ></div>
+
+                </div>
+
+
+
+
+
+                <div class="tableWrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Queue #</th>
+
+                                <th>Customer</th>
+
+                                <th>Wants</th>
+
+                                <th>Duration</th>
+
+                                <th>Time Added</th>
+
+                                <th>Status</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="walkinBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+
+
+<!-- =================================================
+
+                 DRINKS & INVENTORY
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-drinks"
+
+            >
+
+<!-- ORDER DRINKS -->
+
+                <h2>Order Drinks</h2>
+
+                <div class="algo">
+
+                    Session orders attach to an active table or KTV session.
+
+                    Drink-only orders need no facility.
+
+                </div>
+
+                <div class="card">
+
+                    <div class="row drinkOrderGrid">
+        <div class="fieldGroup">
+            <select id="drinkOrderTarget"></select>
+        </div>
+        <div class="fieldGroup">
+            <select id="drinkSelect" onchange="updateOrderSnackChoices()"></select>
+        </div>
+        <div class="fieldGroup snackConditional" id="orderSnackGroup" style="display:none;">
+            <select id="orderSnackSelect" aria-label="Free Snack"></select>
+        </div>
+        <div class="fieldGroup">
+            <input type="number" id="drinkQty" aria-label="Quantity" placeholder="Quantity" min="1" value="1">
+        </div>
+        <button onclick="handleDrinkOrder()">Place Order</button>
+    </div>
+
+                    <div id="drinkOrderMsg" class="msg"></div>
+
+                </div>
+
+
+
+<!-- INVENTORY MANAGEMENT -->
+
+                <h2>Inventory Management</h2>
+
+                <div class="algo">
+
+                    Add, restock, edit, or delete drinks.
+
+                    Stock automatically updates its status.
+
+                </div>
+
+                <div class="card adminOnly">
+
+                    <h3>Add New Drink</h3>
+
+                    <div class="row addDrinkGrid">
+
+                        <div class="fieldGroup">
+                            <input type="text" id="newDrinkName" placeholder="Enter drink name">
+                        </div>
+
+                        <div class="fieldGroup">
+                            <select id="newDrinkCategory" onchange="toggleSnackConfig('new')"></select>
+                        </div>
+
+                        <div class="fieldGroup">
+                            <input type="number" id="newDrinkStock" aria-label="Stock quantity" placeholder="Enter stock quantity" min="0">
+                        </div>
+
+                        <div class="fieldGroup">
+                            <input type="number" id="newDrinkPrice" placeholder="Enter selling price" min="0">
+                        </div>
+                        <div class="fieldGroup snackConditional" id="newSnackGroup" style="display:none;">
+                            <select id="newDrinkSnacks" aria-label="Free Snack Choice"></select>
+                        </div>
+
+                        <button onclick="handleAddDrink()">
+
+                            Add Drink
+
+                        </button>
+
+                    </div>
+
+                    <div id="addDrinkMsg" class="msg"></div>
+
+                </div>
+
+                <div class="card adminOnly">
+
+                    <h3>Edit Drink</h3>
+
+                    <div class="row editDrinkGrid">
+
+                        <div class="fieldGroup">
+                            <select id="editDrinkSelect" onchange="loadDrinkForEdit()"></select>
+                        </div>
+
+                        <div class="fieldGroup">
+                            <input type="text" id="editDrinkName" placeholder="Enter drink name">
+                        </div>
+
+                        <div class="fieldGroup">
+                            <select id="editDrinkCategory" onchange="toggleSnackConfig('edit')"></select>
+                        </div>
+
+                        <div class="fieldGroup">
+                            <input type="number" id="editDrinkPrice" placeholder="Enter selling price" min="0">
+                        </div>
+
+                        <div class="fieldGroup">
+                            <input type="number" id="editDrinkStock" aria-label="Current stock" placeholder="Current stock" min="0" readonly>
+                        </div>
+                        <div class="fieldGroup snackConditional" id="editSnackGroup" style="display:none;">
+                            <select id="editDrinkSnacks" aria-label="Free Snack Choice"></select>
+                        </div>
+
+                    </div>
+
+                    <div class="buttonRow">
+
+                        <button class="secondary" onclick="handleEditDrink()">
+
+                            Save Changes
+
+                        </button>
+
+                        <button class="danger" onclick="handleDeleteDrink()">
+
+                            Delete Drink
+
+                        </button>
+
+                    </div>
+
+                    <div id="editDrinkMsg" class="msg"></div>
+
+                </div>
+
+
+
+<div class="card staffOnly"><h3>Restock Request</h3><div class="algo">Request restocking for any drink before stock is added.</div><div class="restockRequestGrid"><select id="restockRequestDrink"></select><input type="number" id="restockRequestQty" min="1" value="1"><textarea id="restockRequestNote" placeholder="Optional note for admin"></textarea><button onclick="handleRestockRequest()">Request Restock</button></div><div id="restockRequestMsg" class="msg"></div></div><div class="card adminOnly"><h3>Staff Restock Requests</h3><div class="tableWrap"><table><thead><tr><th>ID</th><th>Drink</th><th>Qty</th><th>Requested By</th><th>Note</th><th>Status</th><th>Action</th></tr></thead><tbody id="restockRequestsBody"></tbody></table></div></div>
+<!-- INVENTORY LIST -->
+
+                <div class="inventoryHeader">
+
+                    <h2>Inventory List</h2>
+
+                    <div class="inventoryTools">
+
+                        <input
+
+                            type="text"
+
+                            id="drinkSearchInput"
+
+                            placeholder="Search by drink name or category"
+
+                            oninput="renderInventory()"
+
+                            onkeyup="if(event.key==='Enter') handleDrinkSearch()"
+
+                        >
+
+                        <button class="secondary" onclick="handleDrinkSearch()">
+
+                            Search
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div id="drinkSearchMsg" class="msg"></div>
+
+                <div class="tableWrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Category</th>
+
+                                <th>Drink</th>
+
+                                <th>Price</th>
+
+                                <th>Stock</th>
+
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="inventoryBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+<!-- =================================================
+
+                 BILLING
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-billing"
+
+            >
+
+                <h2>Billing</h2>
+
+                <div class="algo">
+
+                    Combines session fee, extensions,
+
+                    and drinks automatically.
+
+                </div>
+
+
+
+
+
+                <div class="card">
+
+                    <div class="row">
+
+                        <select
+
+                            id="billTarget"
+
+                            onchange="renderBillPreview()"
+
+                        ></select>
+
+                    </div>
+
+
+
+
+
+                    <div id="billPreview"></div>
+
+
+
+
+
+                    <div class="row billingPaymentRow">
+                        <select id="paymentMode" onchange="toggleSplitPayment()">
+                            <option value="Single">Single Payment</option>
+                            <option value="Split">Split Payment</option>
+                        </select>
+
+                        <select id="paymentMethod" onchange="toggleGCashReferenceFields()">
+                            <option value="Cash">Cash</option>
+                            <option value="GCash">GCash</option>
+                        </select>
+
+                        <input type="number" id="amountPaid" placeholder="Amount Paid" min="0" step="1">
+                        <input type="text" id="gcashReference1" class="gcashReferenceInput" placeholder="GCash Reference Number" style="display:none;" autocomplete="off">
+
+                        <div id="splitPaymentFields" class="splitPaymentFields" style="display:none;">
+                            <select id="paymentMethod2" onchange="toggleGCashReferenceFields()">
+                                <option value="GCash">GCash</option>
+                                <option value="Cash">Cash</option>
+                            </select>
+                            <input type="number" id="amountPaid2" placeholder="Second Payment Amount" min="0" step="1">
+                            <input type="text" id="gcashReference2" class="gcashReferenceInput" placeholder="Second GCash Reference Number" style="display:none;" autocomplete="off">
+                        </div>
+
+                        <button onclick="handleCompletePayment()">
+
+                            Complete Payment & Generate Receipt
+
+                        </button>
+
+                    </div>
+
+
+
+
+
+                    <div
+
+                        id="billMsg"
+
+                        class="msg"
+
+                    ></div>
+
+
+
+
+
+                    <div id="receiptActions"></div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+<!-- =================================================
+                 EXPENSES
+            ================================================== -->
+            <div class="section" id="tab-expenses">
+                <h2>Expenses</h2>
+                <div class="algo">Tracks complimentary snack costs payable to the tapsilugan. Paid expenses are included in the Sales Report summary.</div>
+
+                <div class="expenseSummaryGrid">
+                    <div class="card expenseSummaryCard"><span>Today</span><strong id="expenseToday">₱0.00</strong></div>
+                    <div class="card expenseSummaryCard"><span>This Week</span><strong id="expenseWeek">₱0.00</strong></div>
+                    <div class="card expenseSummaryCard"><span>Unpaid to Tapsilugan</span><strong id="expenseUnpaid">₱0.00</strong></div>
+                </div>
+
+                <div class="card">
+                    <h3>Snack Cost Setup</h3>
+                    <div class="snackAddForm">
+                        <div class="fieldGroup"><input type="text" id="newSnackName" placeholder="Enter snack name"></div>
+                        <div class="fieldGroup">
+                            <select id="newSnackCategory">
+                                <option value="Buckets">Buckets</option>
+                                <option value="Liquor">Liquor</option>
+                                <option value="Both">Buckets & Liquor</option>
+                            </select>
+                        </div>
+                        <div class="fieldGroup"><input type="number" id="newSnackCost" min="0" step="0.01" placeholder="Cost"></div>
+                        <button onclick="handleAddSnack()">Add Snack</button>
+                    </div>
+                    <div id="snackSetupMsg" class="msg"></div>
+                    <div id="snackCostSetup" class="snackCostGrid"></div>
+                    <div class="small-note">Snack prices are the actual costs payable to the tapsilugan and are not added to the customer's bill. Use Edit to change a snack name, category, or cost.</div>
+                </div>
+
+                <div class="card">
+                    <div class="expenseFilters">
+                        <select id="expenseStatusFilter" onchange="renderExpenses()">
+                            <option value="All">All Expenses</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                        <input type="date" id="expenseFrom" onchange="renderExpenses()">
+                        <input type="date" id="expenseTo" onchange="renderExpenses()">
+                    </div>
+                </div>
+
+                <div class="tableWrap">
+                    <table>
+                        <thead><tr><th>Expense ID</th><th>Date/Time</th><th>Source</th><th>Snack</th><th>Qty</th><th>Cost</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody id="expensesBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+<!-- =================================================
+
+                 TRANSACTION HISTORY
+
+            ================================================== -->
+
+            <div
+
+                class="section"
+
+                id="tab-history"
+
+            >
+
+                <h2>Transaction History</h2>
+
+                <div class="algo">
+                    View and search completed transaction records.
+                </div>
+
+
+
+
+
+                <div class="card">
+
+                    <div class="row">
+
+                        <input
+
+                            type="text"
+
+                            id="historySearchInput"
+
+                            placeholder="Search by transaction ID, customer, facility, type, or payment method"
+
+                            oninput="renderHistory()"
+
+                        >
+
+
+
+
+
+                        <button
+                            class="secondary"
+                            onclick="renderHistory()"
+                        >
+                            Search
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+                <div class="tableWrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Trans. ID</th>
+
+                                <th>Type</th>
+
+                                <th>Customer</th>
+
+                                <th>Facility</th>
+
+                                <th>Grand Total</th>
+
+                                <th>Payment</th>
+
+                                <th>Time</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="historyBody"></tbody>
+
+                    </table>
+
+                </div>
+
+
+
+
+
+                <h2 class="sectionTitle">Transaction Details</h2>
+
+                <div id="historyDetail"></div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SALES REPORT
+            ================================================== -->
+            <div
+                class="section"
+                id="tab-sales-report"
+            >
+                <h2>Sales Report</h2>
+
+                <div class="algo">
+                    View all completed transactions and export the sales report.
+                </div>
+
+                <div class="card">
+                    <div class="salesReportControls">
+                        <div class="salesSearchGroup">
+                            <input
+                                type="text"
+                                id="salesReportSearchInput"
+                                placeholder="Search by transaction ID, customer, facility, type, or payment method"
+                                oninput="renderSalesReport()"
+                                onkeyup="if(event.key==='Enter') renderSalesReport()"
+                            >
+
+                            <button
+                                class="secondary"
+                                onclick="renderSalesReport()"
+                            >
+                                Search
+                            </button>
+                        </div>
+
+                        <div class="salesExportGroup">
+                            <label>
+                                From
+                                <input
+                                    type="date"
+                                    id="salesExportFrom"
+                                >
+                            </label>
+
+                            <label>
+                                To
+                                <input
+                                    type="date"
+                                    id="salesExportTo"
+                                >
+                            </label>
+
+                            <button onclick="exportSalesReportPDF()">
+                                Export PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        id="salesExportMsg"
+                        class="msg"
+                    ></div>
+                </div>
+
+                <div class="salesFinancialSummary">
+                    <div class="card"><span>Total Sales</span><strong id="salesSummaryTotal">₱0.00</strong></div>
+                    <div class="card"><span>Paid Expenses</span><strong id="salesSummaryExpenses">₱0.00</strong></div>
+                    <div class="card"><span>Net Sales</span><strong id="salesSummaryNet">₱0.00</strong></div>
+                </div>
+
+                <div class="tableWrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trans. ID</th>
+                                <th>Type</th>
+                                <th>Customer</th>
+                                <th>Facility</th>
+                                <th>Grand Total</th>
+                                <th>Payment</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesReportBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+<!-- =================================================
+                 CUSTOMER RECORDS & HISTORY
+            ================================================== -->
+            <div class="section" id="tab-customer-records">
+                <h2>Customer Records & History</h2>
+                <div class="algo">Search and view each customer’s reservation and transaction history.</div>
+                <div class="card">
+                    <div class="moduleSearchRow">
+                        <input type="text" id="customerRecordSearch" placeholder="Search by customer name or contact number" oninput="renderCustomerRecords()">
+                        <button class="secondary" onclick="renderCustomerRecords()">Search</button>
+                    </div>
+                    <div id="customerRecordMsg" class="msg"></div>
+                </div>
+                <div class="tableWrap"><table><thead><tr><th>Customer</th><th>Contact</th><th>Reservations</th><th>Transactions</th><th>Total Spent</th><th>Action</th></tr></thead><tbody id="customerRecordsBody"></tbody></table></div>
+                <h2 class="sectionTitle">Customer History Details</h2>
+                <div id="customerHistoryDetail" class="card"><span class="small-note">Select View History to see a customer's records.</span></div>
+            </div>
+
+<!-- =================================================
+                 STAFF TASKS & NOTES
+            ================================================== -->
+            <div class="section" id="tab-staff-tasks">
+                <h2>Staff Tasks & Notes</h2>
+                <div class="algo">Admin can post tasks or notes for staff to read and manage.</div>
+                <div class="card adminTaskComposer" id="adminTaskComposer">
+                    <h3>Post Task / Note</h3>
+                    <div class="taskFormGrid">
+                        <select id="taskType"><option value="Task">Task</option><option value="Note">Note</option></select>
+                        <select id="taskAssignee" aria-label="Assign To"><option value="ALL">All Staff</option></select>
+                        <input type="text" id="taskTitle" placeholder="Title">
+                        <textarea id="taskNote" placeholder="Write task or note details here..."></textarea>
+                        <button onclick="handleAddStaffTask()">Post</button>
+                    </div>
+                    <div id="staffTaskMsg" class="msg"></div>
+                </div>
+                <div id="staffTasksBody" class="staffTaskCards"></div>
+            </div>
+
+<!-- =================================================
+
+                 STAFF ACCOUNTS
+
+            ================================================== -->
+
+            <div
+                class="section"
+                id="tab-staff"
+            >
+
+                <h2>Staff Account Management</h2>
+
+                <div class="algo">
+                    Manage staff sign-up requests and approved accounts.
+                </div>
+
+                <div
+                    id="staffMsg"
+                    class="msg"
+                ></div>
+
+                <div class="tableWrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffBody"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+        </div>
+
+<!-- END MAIN -->
+
+
+
+
+
+    </div>
+
+<!-- END APP -->
+
+
+
+
+
+
+
+
+    <!-- STAFF SIGN UP -->
+    <div id="signUpOverlay" class="securityOverlay" style="display:none;">
+        <div class="securityModal signUpModal">
+
+            <div class="signUpHeader">
+                <div class="signUpBrand">Snooker's Billiard Hall</div>
+                <h2>Create an Account</h2>
+                <p>
+                    Register as a staff member. Your account will be available
+                    after administrator approval.
+                </p>
+            </div>
+
+            <div class="signUpField">
+                <label for="signUpName">Full Name</label>
+                <input
+                    type="text"
+                    id="signUpName"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                >
+            </div>
+
+            <div class="signUpField">
+                <label for="signUpEmail">Gmail Address</label>
+                <input
+                    type="email"
+                    id="signUpEmail"
+                    placeholder="example@gmail.com"
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="signUpField">
+                <label for="signUpUsername">Username</label>
+                <input
+                    type="text"
+                    id="signUpUsername"
+                    placeholder="Create a username"
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="signUpField">
+                <label for="signUpPassword">Password</label>
+                <input
+                    type="password"
+                    id="signUpPassword"
+                    placeholder="Minimum of 8 characters"
+                    autocomplete="new-password"
+                >
+            </div>
+
+            <div class="signUpField">
+                <label for="signUpConfirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="signUpConfirmPassword"
+                    placeholder="Re-enter your password"
+                    autocomplete="new-password"
+                >
+            </div>
+
+            <div id="signUpMsg" class="msg"></div>
+
+            <div class="signUpActions">
+                <button
+                    class="secondary"
+                    type="button"
+                    onclick="closeSignUpModal()"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    onclick="handleSignUp()"
+                >
+                    Create Account
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ADMIN TEMPORARY PASSWORD POPUP -->
+    <div id="temporaryPasswordOverlay" class="securityOverlay" style="display:none;">
+        <div class="temporaryPasswordModal">
+            <h2>Password Reset Successful</h2>
+            <p>
+                Give this temporary password privately to the staff member.
+                The old password is never displayed.
+            </p>
+
+            <div class="temporaryPasswordLabel">TEMPORARY PASSWORD</div>
+            <div id="temporaryPasswordValue" class="temporaryPasswordValue"></div>
+
+            <p class="temporaryPasswordNote">
+                The staff member will be required to create a new private password after logging in.
+            </p>
+
+            <button type="button" onclick="closeTemporaryPasswordPopup()">
+                Done
+            </button>
+        </div>
+    </div>
+
+    <!-- FORCE PASSWORD CHANGE -->
+    <div id="forcePasswordOverlay" class="securityOverlay" style="display:none;">
+        <div class="securityModal">
+            <h2>Create Your Private Password</h2>
+            <p>
+                You signed in using a temporary password.
+                Create a new password that only you know.
+            </p>
+
+            <input
+                type="password"
+                id="forcedNewPassword"
+                placeholder="New Password"
+                autocomplete="new-password"
+            >
+
+            <input
+                type="password"
+                id="forcedConfirmPassword"
+                placeholder="Confirm New Password"
+                autocomplete="new-password"
+            >
+
+            <button onclick="handleForcedPasswordChange()">
+                Change Password
+            </button>
+
+            <div id="forcePasswordMsg" class="msg"></div>
+        </div>
+    </div>
+
+    <script
+        type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+</body>
+
+</html>
