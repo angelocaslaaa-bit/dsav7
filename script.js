@@ -3988,6 +3988,10 @@ function loadDrinkForEdit() {
         stockInput.value =
             drink.stock;
     }
+    const restockQtyInput = document.getElementById("adminRestockQty");
+    if (restockQtyInput) {
+        restockQtyInput.value = "";
+    }
     toggleSnackConfig("edit");
 }
 
@@ -4046,7 +4050,7 @@ async function handleEditDrink() {
     ) {
         showMsg(
             "editDrinkMsg",
-            "Enter valid drink information and stock quantity.",
+            "Enter a valid drink name and selling price.",
             "warn"
         );
         return;
@@ -4085,6 +4089,66 @@ async function handleEditDrink() {
     showMsg(
         "editDrinkMsg",
         `${drink.name} was updated successfully.`,
+        "success"
+    );
+}
+
+/* =========================================================
+   ADMIN RESTOCK DRINK
+========================================================= */
+async function handleAdminRestockDrink() {
+    if (!loggedInUser || loggedInUser.role !== "Admin") return;
+
+    const select = document.getElementById("editDrinkSelect");
+    const qtyInput = document.getElementById("adminRestockQty");
+
+    if (!select || !qtyInput) return;
+
+    const drink = manualFind(
+        drinks,
+        item => item.id === select.value
+    );
+
+    const quantity = parseInt(qtyInput.value, 10);
+
+    if (!drink) {
+        showMsg(
+            "editDrinkMsg",
+            "Select a drink to restock.",
+            "warn"
+        );
+        return;
+    }
+
+    if (isNaN(quantity) || quantity < 1) {
+        showMsg(
+            "editDrinkMsg",
+            "Enter a valid restock quantity.",
+            "warn"
+        );
+        return;
+    }
+
+    const confirmed = await showActionConfirmation(
+        "Restock Drink?",
+        `Add ${quantity} stock to ${drink.name}?`,
+        "Restock"
+    );
+
+    if (!confirmed) return;
+
+    drink.stock += quantity;
+    syncDrinkStatus(drink);
+
+    qtyInput.value = "";
+
+    renderInventory();
+    populateAllSelects();
+    loadDrinkForEdit();
+
+    showMsg(
+        "editDrinkMsg",
+        `${drink.name} restocked successfully. Added ${quantity}. Current stock: ${drink.stock}.`,
         "success"
     );
 }
