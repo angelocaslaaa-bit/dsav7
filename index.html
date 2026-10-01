@@ -1330,7 +1330,7 @@
 
                 <div class="card adminOnly">
 
-                    <h3>Edit Drink</h3>
+                    <h3>Edit / Restock Drink</h3>
 
                     <div class="row editDrinkGrid">
 
@@ -1353,6 +1353,10 @@
                         <div class="fieldGroup">
                             <input type="number" id="editDrinkStock" aria-label="Current stock" placeholder="Current stock" min="0" readonly>
                         </div>
+
+                        <div class="fieldGroup">
+                            <input type="number" id="adminRestockQty" aria-label="Restock quantity" placeholder="Restock quantity" min="1">
+                        </div>
                         <div class="fieldGroup snackConditional" id="editSnackGroup" style="display:none;">
                             <select id="editDrinkSnacks" aria-label="Free Snack Choice"></select>
                         </div>
@@ -1364,6 +1368,12 @@
                         <button class="secondary" onclick="handleEditDrink()">
 
                             Save Changes
+
+                        </button>
+
+                        <button onclick="handleAdminRestockDrink()">
+
+                            Restock
 
                         </button>
 
